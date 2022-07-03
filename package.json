@@ -1,0 +1,23 @@
+{
+  "name": "nbascraper",
+  "version": "1.0.0",
+  "description": "scrapes nba and sees how accurate a simple predictor algo would be",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "author": "Edward Chen",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "fs": "0.0.1-security",
+    "get-urls": "^11.0.0",
+    "node-fetch": "^3.2.6",
+    "nodemon": "^2.0.18",
+    "puppeteer": "^15.3.0",
+    "request": "^2.88.2"
+  }
+}
