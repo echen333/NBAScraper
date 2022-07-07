@@ -1,6 +1,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
+const fs = require('fs')
 
 async function scrapeBoxScore (str) {
     console.log("BYE",str);
@@ -23,26 +24,41 @@ async function scrapeBoxScore (str) {
     const xy = $('#all_line_score').each((i,el)=>{
         console.log("ASDAS");
         // console.log($(el).html());
-        console.log($(el).text());
+        // console.log("RN",$(el).html());
+        TMPX = ($(el).html());
+        
+        // TMPX.toString().map
+        scoreArr = [];
+        cur = "";
+        last = -1;
+        for (let i in TMPX.toString()) {
+            Tchar = TMPX[i];
+            if (Tchar >='0' && Tchar <='9'){
+                // console.log(i,Tchar);
+                if(last != i-1){
+                    if(cur.length>1 && cur!="2022" && cur!=="2021"){
+                        scoreArr.push(cur);
+                    }
+                    cur = "";
+                }
+                cur += TMPX[i];
+                last = i;
+            }
+        }
+
+        sum3 = parseInt(scoreArr[0])+parseInt(scoreArr[1])+parseInt(scoreArr[2]);
+        sum4 = parseInt(scoreArr[4]);
+        sum32 = parseInt(scoreArr[5])+parseInt(scoreArr[6])+parseInt(scoreArr[7]);
+        sum42 = parseInt(scoreArr[5])+parseInt(scoreArr[6])+parseInt(scoreArr[7])+parseInt(scoreArr[8]);
+        // dataS = sum3.toString()+sum4+sum32+sum42;
+        qdiff = Math.abs(sum3-sum32);
+        q4Diff = (sum3>sum32? sum4-sum42: sum42-sum4);
+        isWin = q4Diff>0;
+        dataS = [sum3,sum4,sum32,sum42, qdiff, q4Diff, isWin];
+        writeStream.write(dataS.join(',')+ '\n', () => {
+            // a line was written to stream
+        })
     });
-    const xx = $('#all_line_score').children('#table_container is_setup')
-    // const xx = $('#all_line_score').children('.table_container')
-    console.log(xx.html());
-    // const z = $('div[id="line_score_sh"]').children().each((i,el)=>{
-    //     console.log($(el).html());
-    // });
-    // const za = $('div[id="line_score_sh"]').children().find('tbody').each( (i,el) => {
-    //     const zz=$(el).children().find('table')
-    //     console.log("HI",i,zz.html());
-    //     // console.log($(el).text());
-    //     // console.log("HI");
-    // });
-    // console.log(yyy.html());
-    // console.log(y.html());
-    // console.log(yy.html());
-    // console.log(yya.html());
-    // console.log(zb.html());
-    // console.log(zc.html());
 }
 async function scrape () {
     try {
@@ -75,13 +91,13 @@ async function scrape () {
             // console.log($(el).attr('href'));
         });
         const zc =  $('.table_container').children().find('tbody').find('tr').find('td').find('a').each( (i,el) => {
-            if(i<3){
+            // if(i<3){
                 const str = $(el).attr('href');
                 if(str.includes('boxscores')){
                     scrapeBoxScore(`https://www.basketball-reference.com/${str}`);
                     console.log(i,str);
                 }
-            }
+            // }
         });
         // console.log(y.html());
 
@@ -95,4 +111,12 @@ async function scrape () {
     }
 }
 
+let writeStream = fs.createWriteStream('./dataRet.csv')
+
+
+dataS = ["Team 1 Q3", "Team 1 Total", "Team 2 Q3", "Team 2 Total"];
+writeStream.write(dataS.join(',')+ '\n', () => {
+    // a line was written to stream
+})
 scrape();
+// writeStream.end();
